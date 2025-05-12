@@ -1,12 +1,6 @@
 package mem
 
-import (
-	"encoding/json"
-
-	"github.com/ravoni4devs/syspector/internal/common"
-)
-
-var invoke common.Invoker = common.Invoke{}
+import "encoding/json"
 
 // Memory usage statistics. Total, Available and Used contain numbers of bytes
 // for human consumption.

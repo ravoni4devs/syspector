@@ -3,6 +3,7 @@
 package syspector
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -38,13 +39,13 @@ func (c *statCollector) Stats() (Stats, error) {
 	stats.Runtime = goruntime.GetStat()
 	systemStat, err := system.GetStat()
 	if err != nil {
-		return stats, err
+		return stats, fmt.Errorf("getting system stats %s", err)
 	}
 	stats.System = systemStat
 
 	pidStat, err := pid.GetStat(os.Getpid(), time.Second*1)
 	if err != nil {
-		return stats, err
+		return stats, fmt.Errorf("getting PID stats %s", err)
 	}
 	stats.PID = pidStat
 
@@ -60,7 +61,7 @@ func (c *statCollector) Stats() (Stats, error) {
 	}
 	memoryStat, err := mem.GetStat()
 	if err != nil {
-		return stats, err
+		return stats, fmt.Errorf("getting memory stats %s", err)
 	}
 	stats.Memory.Total = memoryStat.Total
 	stats.Memory.Available = memoryStat.Available
@@ -69,7 +70,7 @@ func (c *statCollector) Stats() (Stats, error) {
 	stats.Memory.UsedPercent = memoryStat.UsedPercent
 	cpuPercent, err := cpu.Percent(time.Second*1, false)
 	if err != nil || len(cpuPercent) == 0 {
-		return stats, err
+		return stats, fmt.Errorf("getting cpu stats %s", err)
 	}
 	stats.CpuPercent = cpuPercent[0]
 
