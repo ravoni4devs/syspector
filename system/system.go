@@ -1,11 +1,7 @@
 package system
 
 import (
-	"fmt"
 	"runtime"
-	"strings"
-
-	"github.com/ravoni4devs/syspector/internal/common"
 )
 
 const (
@@ -57,15 +53,6 @@ func GetOSInfo() (SystemStat, error) {
 		stat.Virtualized = isVirtualized()
 	}
 	return stat, nil
-}
-
-func Uptime() (float64, error) {
-	filename := fmt.Sprintf("%s/%s", procBasePath, uptimeFilePath)
-	data, err := common.ReadFileNoStat(filename)
-	if err != nil {
-		return 0, err
-	}
-	return common.ParseFloat(strings.Split(string(data), " ")[0]), nil
 }
 
 func NumCPU() int {
