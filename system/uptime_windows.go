@@ -2,18 +2,31 @@
 
 package system
 
-import "syscall"
+import (
+	"syscall"
+)
 
 func Uptime() (float64, error) {
+	// Windows Vista/Server 2008
 	lib := syscall.NewLazyDLL("kernel32.dll")
-	proc := lib.NewProc("GetTickCount64")
+	procGetTickCount64 := lib.NewProc("GetTickCount64")
 
-	ret, _, err := proc.Call()
-	if err != nil && err.Error() != "The operation completed successfully." {
+	if procGetTickCount64.Find() == nil {
+		ret, _, err := procGetTickCount64.Call()
+		if err != syscall.Errno(0) {
+			return 0, err
+		}
+		uptimeMs := uint64(ret)
+		return float64(uptimeMs) / 1000.0, nil
+	}
+
+	// Fallback to GetTickCount
+	procGetTickCount := lib.NewProc("GetTickCount")
+	ret, _, err := procGetTickCount.Call()
+	if err != syscall.Errno(0) {
 		return 0, err
 	}
 
-	// GetTickCount64 retorna milissegundos desde a inicialização
-	uptimeMs := uint64(ret)
+	uptimeMs := uint32(ret)
 	return float64(uptimeMs) / 1000.0, nil
 }
