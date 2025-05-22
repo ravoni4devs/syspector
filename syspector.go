@@ -29,6 +29,7 @@ func New() Collector {
 type Stats struct {
 	Memory     mem.VirtualMemoryStat `json:"memory"`
 	CpuPercent float64               `json:"cpu"`
+	CPUs       []cpu.InfoStat        `json:"cpus,omitzero"`
 	Runtime    goruntime.RuntimeStat `json:"runtime"`
 	PID        pid.PidStat           `json:"pid"`
 	System     system.SystemStat     `json:"system"`
@@ -70,10 +71,9 @@ func (c *statCollector) Stats() (Stats, error) {
 	stats.Memory.UsedPercent = memoryStat.UsedPercent
 	cpuPercent, err := cpu.Percent(time.Second*1, false)
 	if err != nil || len(cpuPercent) == 0 {
-		return stats, fmt.Errorf("getting cpu stats %s", err)
+		return stats, fmt.Errorf("getting cpu percent %s", err)
 	}
 	stats.CpuPercent = cpuPercent[0]
-
 	return stats, nil
 }
 

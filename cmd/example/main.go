@@ -102,6 +102,11 @@ func printMemoryStats() {
 func printCpuStats() {
 	usage, _ := cpu.Percent(time.Second*1, false)
 	fmt.Println("CPU usage:", usage)
+	stats, _ := cpu.Info()
+	fmt.Println("Total CPU stats", len(stats))
+	for index, s := range stats {
+		fmt.Println(index+1, s.String())
+	}
 }
 
 func printPidStats(pid int) {
